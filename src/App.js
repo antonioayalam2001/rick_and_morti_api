@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Informacion from "./Informacion.jsx";
+import List from "./List.jsx";
+import Loader from "./Loader";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [characters, setCharacters] = useState([]);
+  const [info, setInfo] = useState(null);
+  const [count, setCount] = useState(0);
+
+  const fetchData = async (count) => {
+    try {
+      const response = await fetch("https://rickandmortyapi.com/api/character");
+      const data = await response.json();
+      console.log(data);
+      setInfo(data.info);
+      setCharacters(data.results);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      console.log("Finally");
+    }
+  };
+  useEffect(() => {
+    fetchData(count);
+  }, [count]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1 style={{textAlign: "center",color:"green"}}>Rick And Morty First Project with React</h1>
+      {info ? (
+        <>
+          <Informacion info={info} />
+        </>
+      ) : (
+        <Loader/>
+      )}
+      <div className="grid">
+      <List charactersList={characters} />
+      </div>
+      {/* <pre>{ JSON.stringify(info)}</pre> */}
+      {/* <pre>{JSON.stringify(characters, null, 2)}</pre> */}
+    </>
   );
 }
 
